@@ -1,0 +1,16 @@
+#!/bin/bash
+
+function_name=$1
+payload=${2:-'{}'}
+
+# Create a temporary file for storing the output
+outfile=$(mktemp)
+
+# Invoke the function
+aws lambda invoke --function-name ${function_name} --payload ${payload} ${outfile} &>/dev/null
+
+# Display the output
+cat ${outfile} ; echo
+
+# Remove the temporary file
+rm ${outfile} &>/dev/null

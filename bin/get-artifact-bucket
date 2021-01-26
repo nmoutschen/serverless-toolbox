@@ -1,0 +1,14 @@
+#!/bin/bash
+
+{
+    aws_region=$(python3 -c 'import boto3; print(boto3.Session().region_name)')
+    aws_account_id=$(aws sts get-caller-identity | jq .Account -r)
+
+    s3_bucket="serverless-toolbox-${aws_account_id}-${aws_region}"
+
+    aws s3api head-bucket --bucket $s3_bucket || {
+        aws s3 mb s3://$s3_bucket --region ${aws_region}
+    }
+} &>/dev/null
+
+echo $s3_bucket

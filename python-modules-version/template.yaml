@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: 'AWS::Serverless-2016-10-31'
+
+Globals:
+  Function:
+    Handler: main.handler
+
+Resources:
+  Python38Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: python3.8
+      CodeUri: .
+
+  Python37Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: python3.7
+      CodeUri: .
+
+  Python36Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: python3.6
+      CodeUri: .
+
+Outputs:
+  Python38Function:
+    Value: !Ref Python38Function
+  
+  Python37Function:
+    Value: !Ref Python37Function
+
+  Python36Function:
+    Value: !Ref Python36Function
