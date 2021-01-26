@@ -8,3 +8,6 @@ run:
 	@../bin/invoke $$(aws cloudformation describe-stacks --stack-name $(STACK_NAME) --query 'Stacks[0].Outputs[?OutputKey==`Python38Function`].OutputValue' --output text)
 	@../bin/invoke $$(aws cloudformation describe-stacks --stack-name $(STACK_NAME) --query 'Stacks[0].Outputs[?OutputKey==`Python37Function`].OutputValue' --output text)
 	@../bin/invoke $$(aws cloudformation describe-stacks --stack-name $(STACK_NAME) --query 'Stacks[0].Outputs[?OutputKey==`Python36Function`].OutputValue' --output text)
+
+delete:
+	aws cloudformation delete-stack --stack-name $(STACK_NAME)
