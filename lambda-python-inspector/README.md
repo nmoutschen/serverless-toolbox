@@ -6,6 +6,7 @@ This tool contains a Lambda function that will inspect the Lambda execution envi
 * __environ__: Key-value pairs for the environment variables
 * __pythonVersion__: Current python version
 * __moduleVersions__: Versions of the boto3 and botocore Python modules
+* __mounts__: List all mounts in the execution environment
 * __writeableFiles__: Array of all writeable files and folders in the execution environment
 
 ## Usage

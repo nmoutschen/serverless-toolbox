@@ -1,6 +1,6 @@
 import os
 import sys
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 
 import boto3
@@ -26,6 +26,15 @@ def get_module_versions() -> Dict[str, str]:
         "boto3": boto3.__version__,
         "botocore": botocore.__version__
     }
+
+
+def get_mounts() -> List[Tuple[str]]:
+    """
+    Return the list of mounts as (device, mountpoint) pairs
+    """
+
+    with open("/proc/mounts", "r") as mountfile:
+        return [tuple(v.split(" ", 2)[:2]) for v in mountfile.readlines()]
 
 
 def get_python_version() -> str:
@@ -102,6 +111,7 @@ def handler(event, context):
         "environ": get_environ(),
         "pythonVersion": get_python_version(),
         "moduleVersions": get_module_versions(),
+        "mounts": get_mounts(),
         "writeableFiles": get_writeable_files(),
     }
 
