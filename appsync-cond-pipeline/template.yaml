@@ -1,0 +1,167 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: 'AWS::Serverless-2016-10-31'
+
+Resources:
+  # API
+
+  Api:
+    Type: AWS::AppSync::GraphQLApi
+    Properties:
+      AuthenticationType: API_KEY
+      Name: api
+      XrayEnabled: true
+
+  ApiSchema:
+    Type: AWS::AppSync::GraphQLSchema
+    Properties:
+      ApiId: !GetAtt Api.ApiId
+      DefinitionS3Location: "api.graphql"
+
+  ApiTableRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: appsync.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: TableReadAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                Resource:
+                  - !GetAtt Table.Arn
+
+  ApiTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt Api.ApiId
+      Name: Table
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !GetAtt ApiTableRole.Arn
+      DynamoDBConfig:
+        AwsRegion: !Ref AWS::Region
+        TableName: !Ref Table
+
+  ApiFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: appsync.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CreateOrderFunctionAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource: !GetAtt Function.Arn
+
+  ApiFunctionDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt Api.ApiId
+      Name: Function
+      Type: AWS_LAMBDA
+      ServiceRoleArn: !GetAtt ApiFunctionRole.Arn
+      LambdaConfig:
+        LambdaFunctionArn: !GetAtt Function.Arn
+
+  ApiFetchTableFunction:
+    Type: AWS::AppSync::FunctionConfiguration
+    Properties:
+      ApiId: !GetAtt Api.ApiId
+      Name: fetch_table
+      DataSourceName: !GetAtt ApiTableDataSource.Name
+      FunctionVersion: "2018-05-29"
+      RequestMappingTemplate: |
+        {
+          "operation": "GetItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($ctx.stash.id)
+          }
+        }
+      ResponseMappingTemplate: |
+        $util.qr($ctx.stash.put("data", $ctx.result))
+        {}
+
+  ApiGenerateFunction:
+    Type: AWS::AppSync::FunctionConfiguration
+    Properties:
+      ApiId: !GetAtt Api.ApiId
+      Name: generate
+      DataSourceName: !GetAtt ApiFunctionDataSource.Name
+      FunctionVersion: "2018-05-29"
+      RequestMappingTemplate: |
+        #if( !$util.isNullOrEmpty($ctx.stash.data) )
+          #return ($ctx.stash.data)
+        #end
+
+        {
+          "version": "2017-02-28",
+          "operation": "Invoke",
+          "payload": {
+            "id": $util.toJson($ctx.args.id)
+          }
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result)
+
+  ApiPipelineResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: ApiSchema
+    Properties:
+      ApiId: !GetAtt Api.ApiId
+      TypeName: Query
+      FieldName: getValue
+      Kind: PIPELINE
+      PipelineConfig:
+        Functions:
+          - !GetAtt ApiFetchTableFunction.FunctionId
+          - !GetAtt ApiGenerateFunction.FunctionId
+      RequestMappingTemplate: |
+        $util.qr($ctx.stash.put("id", $ctx.args.id))
+        {}
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result)
+
+  # DynamoDB Table
+  Table:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+  # Function
+  Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: python3.8
+      Handler: main.handler
+      CodeUri: ./src
+
+Outputs:
+  ApiId:
+    Value: !GetAtt Api.ApiId
+
+  ApiUrl:
+    Value: !GetAtt Api.GraphQLUrl
+
+  TableName:
+    Value: !Ref Table

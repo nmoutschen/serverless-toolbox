@@ -1,0 +1,7 @@
+type Value {
+    message: String!
+}
+
+type Query {
+    getValue(id: String!): Value!
+}
