@@ -24,4 +24,5 @@ All rules in this folder have an id in the form __E9xxx__, meaning that failure 
 |------------------------------------|----------------------------------------------------------------------|
 | [E9000](./e9000_lambda_runtime.py) | Ensure Lambda functions only use authorized runtimes                 |
 | [E9001](./e9001_lambda_layers.py)  | Ensure Lambda functions use mandatory layers                         |
+| [E9002](./e9002_lambda_tracing.py) | Ensure Lambda functions have active tracing enabled                  |
 | [E9010](./e9010_lambda_esm_destination.py) | Ensure Lambda EventSourceMappings have OnFailure destination |
