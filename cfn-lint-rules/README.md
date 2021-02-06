@@ -20,13 +20,13 @@ All rules in this folder have an id in the form __E9xxx__, meaning that failure 
 
 ## Available rules
 
-| Rule ID                            | Description                                                          |
-|------------------------------------|----------------------------------------------------------------------|
-| [E9000](./e9000_lambda_runtime.py) | Ensure Lambda functions only use authorized runtimes                 |
-| [E9001](./e9001_lambda_layers.py)  | Ensure Lambda functions use mandatory layers                         |
-| [E9002](./e9002_lambda_tracing.py) | Ensure Lambda functions have active tracing enabled                  |
-| [E9010](./e9010_lambda_esm_destination.py) | Ensure Lambda EventSourceMappings have OnFailure destination |
-| [E9100](./e9100_apigateway_log.py) | Ensure API Gateway REST and HTTP APIs have logging enabled           |
-| [E9101](./e9101_apigateway_tracing.py) | Ensure API Gateway REST APIs have tracing enabled                |
-| [E9200](./e9200_stepfunctions_log.py) | Ensure Step Functions state machines have logging enabled         |
-| [E9201](./e9201_stepfunctions_tracing.py) | Ensure Step Functions state machines have tracing enabled     |
+| Rule ID                                          | Description                                                          |
+|--------------------------------------------------|----------------------------------------------------------------------|
+| [E9000](./rules/e9000_lambda_runtime.py)         | Ensure Lambda functions only use authorized runtimes                 |
+| [E9001](./rules/e9001_lambda_layers.py)          | Ensure Lambda functions use mandatory layers                         |
+| [E9002](./rules/e9002_lambda_tracing.py)         | Ensure Lambda functions have active tracing enabled                  |
+| [E9010](./rules/e9010_lambda_esm_destination.py) | Ensure Lambda EventSourceMappings have OnFailure destination         |
+| [E9100](./rules/e9100_apigateway_log.py)         | Ensure API Gateway REST and HTTP APIs have logging enabled           |
+| [E9101](./rules/e9101_apigateway_tracing.py)     | Ensure API Gateway REST APIs have tracing enabled                    |
+| [E9200](./rules/e9200_stepfunctions_log.py)      | Ensure Step Functions state machines have logging enabled            |
+| [E9201](./rules/e9201_stepfunctions_tracing.py)  | Ensure Step Functions state machines have tracing enabled            |
