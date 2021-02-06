@@ -25,8 +25,10 @@ class LambdaTracingRule(CloudFormationLintRule):
         for key, value in cfn.get_resources(["AWS::Lambda::Function"]).items():
             tracing = value.get("Properties", {}).get("TracingConfig", {}).get("Mode", "")
 
-            if trace != "Active":
+            if tracing != "Active":
                 matches.append(RuleMatch(
                     ["Resources", key],
                     self._message.format(key)
                 ))
+
+        return matches

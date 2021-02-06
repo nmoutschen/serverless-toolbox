@@ -10,8 +10,19 @@ from cfnlint.rules import CloudFormationLintRule, RuleMatch
 
 MANDATORY_LAYERS = [
     # Customize this to set the list of mandatory layers
-    re.compile(r"arn:aws:lambda:[^:]+:580247275435:layer:LambdaInsightsExtension:2")
+    re.compile(r"arn:aws:lambda:(\${AWS::Region}|[a-z0-9\-]+):580247275435:layer:LambdaInsightsExtension:2")
 ]
+
+
+def parse_layer(layer) -> str:
+    if isinstance(layer, str):
+        return layer
+
+    if isinstance(layer, dict):
+        if "Fn::Sub" in layer:
+            return layer["Fn::Sub"]
+
+    raise ValueError("Invalid type for layer: {}".format(type(layer).__name__))
 
 
 class LambdaLayersRule(CloudFormationLintRule):
@@ -31,7 +42,10 @@ class LambdaLayersRule(CloudFormationLintRule):
 
         # Scan through Lambda functions
         for key, value in cfn.get_resources(["AWS::Lambda::Function"]).items():
-            layers = value.get("Properties", {}).get("Layers", [])
+            layers = [
+                parse_layer(layer)
+                for layer in value.get("Properties", {}).get("Layers", [])
+            ]
 
             # Check if all mandatory layers are present
             has_all_layers = functools.reduce(
