@@ -1,5 +1,5 @@
 """
-Custom rule to ensre Step Function State Machines have tracing enabled
+Custom rule to ensure Step Function State Machines have tracing enabled
 """
 
 

@@ -30,3 +30,4 @@ All rules in this folder have an id in the form __E9xxx__, meaning that failure 
 | [E9101](./rules/e9101_apigateway_tracing.py)     | Ensure API Gateway REST APIs have tracing enabled                    |
 | [E9200](./rules/e9200_stepfunctions_log.py)      | Ensure Step Functions state machines have logging enabled            |
 | [E9201](./rules/e9201_stepfunctions_tracing.py)  | Ensure Step Functions state machines have tracing enabled            |
+| [E9300](./rules/e9300_appsync_tracing.py)        | Ensure AppSync GraphQL APIs have tracing enabled                     |
