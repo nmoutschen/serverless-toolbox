@@ -21,7 +21,7 @@ class ApiGatewayTracingRule(CloudFormationLintRule):
 
         matches = []
 
-        # Scan through API Gateway logs
+        # Scan through API Gateway stages
         for key, value in cfn.get_resources(["AWS::ApiGateway::Stage"]).items():
             tracing = value.get("Properties", {}).get("TracingEnabled", False)
 

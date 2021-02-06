@@ -21,7 +21,7 @@ class ApiGatewayLogRule(CloudFormationLintRule):
 
         matches = []
 
-        # Scan through API Gateway logs
+        # Scan through API Gateway stages
         for key, value in cfn.get_resources(["AWS::ApiGateway::Stage", "AWS::ApiGatewayV2::Stage"]).items():
             log_settings = value.get("Properties", {}).get("AccessLogSettings", {}).get("DestinationArn")
 

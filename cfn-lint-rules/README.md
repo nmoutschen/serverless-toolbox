@@ -28,3 +28,5 @@ All rules in this folder have an id in the form __E9xxx__, meaning that failure 
 | [E9010](./e9010_lambda_esm_destination.py) | Ensure Lambda EventSourceMappings have OnFailure destination |
 | [E9100](./e9100_apigateway_log.py) | Ensure API Gateway REST and HTTP APIs have logging enabled           |
 | [E9101](./e9101_apigateway_tracing.py) | Ensure API Gateway REST APIs have tracing enabled                |
+| [E9200](./e9200_stepfunctions_log.py) | Ensure Step Functions state machines have logging enabled         |
+| [E9201](./e9201_stepfunctions_tracing.py) | Ensure Step Functions state machines have tracing enabled     |
