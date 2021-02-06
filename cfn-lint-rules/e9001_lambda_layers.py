@@ -14,10 +14,6 @@ MANDATORY_LAYERS = [
 ]
 
 
-def check_layer(layer_name):
-    return 
-
-
 class LambdaLayersRule(CloudFormationLintRule):
     id = "E9001"
     shortdesc = "Lambda Mandatory Layers"
